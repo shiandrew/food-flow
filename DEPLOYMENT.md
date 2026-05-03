@@ -224,7 +224,9 @@ What the Dockerfile now does:
 Set these on the web service:
 
 ```text
-DATABASE_URL=<render-internal-database-url>
+SPRING_DATASOURCE_URL=jdbc:postgresql://<render-db-host>/<render-db-name>
+DATABASE_USERNAME=<render-db-username>
+DATABASE_PASSWORD=<render-db-password>
 INIT_DB=never
 ```
 
@@ -233,14 +235,16 @@ Notes:
 - the app is now configured to use `server.port=${PORT:8080}` in [backend/src/main/resources/application.yml](/Users/andrewshi/Desktop/Job/job/FoodFlow/backend/src/main/resources/application.yml:1)
 - Render provides the `PORT` environment variable automatically for web services
 - you do not need to set `SERVER_PORT` manually for this setup
-- `DATABASE_URL` should be the full internal PostgreSQL connection URL from Render
-- you do not need separate host/port/database env vars on Render if `DATABASE_URL` is set
-- keep `DATABASE_USERNAME` and `DATABASE_PASSWORD` unset unless you intentionally want to override credentials from the URL
+- `SPRING_DATASOURCE_URL` must be a JDBC URL that starts with `jdbc:postgresql://`
+- Render's raw Postgres URL usually starts with `postgresql://`, which is not valid for Spring's JDBC datasource as-is
+- use the Render internal host and database name to form the JDBC URL, and keep credentials in `DATABASE_USERNAME` and `DATABASE_PASSWORD`
 
 For the very first deploy, if you want sample schema/data loaded:
 
 ```text
-DATABASE_URL=<render-internal-database-url>
+SPRING_DATASOURCE_URL=jdbc:postgresql://<render-db-host>/<render-db-name>
+DATABASE_USERNAME=<render-db-username>
+DATABASE_PASSWORD=<render-db-password>
 INIT_DB=always
 ```
 
@@ -306,7 +310,9 @@ Render provides HTTPS termination for web services.
 ## Environment Variables
 
 ```text
-DATABASE_URL=<render-internal-database-url>
+SPRING_DATASOURCE_URL=jdbc:postgresql://<host>/<database-name>
+DATABASE_USERNAME=<username>
+DATABASE_PASSWORD=<password>
 INIT_DB=never
 ```
 
