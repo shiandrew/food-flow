@@ -4,18 +4,6 @@ import { addItemToCart, getMenus, getRestaurants } from "../utils";
 import { PlusOutlined } from "@ant-design/icons";
 
 const { Option } = Select;
-const FALLBACK_IMAGE =
-  "data:image/svg+xml;utf8," +
-  encodeURIComponent(`
-    <svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360">
-      <rect width="640" height="360" fill="#f3f4f6" />
-      <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#6b7280" font-family="Arial, sans-serif" font-size="28">
-        Image unavailable
-      </text>
-    </svg>
-  `);
-
-const getProxiedImageUrl = (url) => `/images/proxy?url=${encodeURIComponent(url)}`;
 
 const AddToCartButton = ({ itemId }) => {
   const [loading, setLoading] = useState(false);
@@ -118,18 +106,9 @@ const FoodList = () => {
                 extra={<AddToCartButton itemId={item.id} />}
               >
                 <img
-                  src={getProxiedImageUrl(item.image_url)}
+                  src={item.image_url}
                   alt={item.name}
-                  style={{
-                    width: "100%",
-                    height: 220,
-                    objectFit: "cover",
-                    display: "block",
-                  }}
-                  onError={(event) => {
-                    event.currentTarget.onerror = null;
-                    event.currentTarget.src = FALLBACK_IMAGE;
-                  }}
+                  style={{ width: "100%", display: "block" }}
                 />
                 {`Price: ${item.price}`}
               </Card>
