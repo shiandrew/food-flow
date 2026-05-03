@@ -50,6 +50,7 @@ public class AppConfig {
                         auth
                                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                                 .requestMatchers(HttpMethod.GET, "/", "/index.html", "/*.json", "/*.png", "/static/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/images/**").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/login", "/logout", "/signup").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/restaurants/**", "/restaurant/**").permitAll()
                                 .anyRequest().authenticated()
