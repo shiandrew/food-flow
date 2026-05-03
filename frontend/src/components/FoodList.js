@@ -106,7 +106,7 @@ const FoodList = () => {
                 extra={<AddToCartButton itemId={item.id} />}
               >
                 <img
-                  src={item.image_url}
+                  src={item.imageUrl}
                   alt={item.name}
                   style={{ width: "100%", display: "block" }}
                 />
