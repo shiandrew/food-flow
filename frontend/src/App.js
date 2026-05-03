@@ -22,7 +22,7 @@ const App = () => {
             level={2}
             style={{ color: "white", lineHeight: "inherit", marginBottom: 0 }}
           >
-            Lai Food
+            Food Flow
           </Title>
           <div>{authed ? <MyCart /> : <SignupForm />}</div>
         </div>
