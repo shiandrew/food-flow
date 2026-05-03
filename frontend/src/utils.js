@@ -5,8 +5,8 @@ export const login = (credentials) => {
     headers: {
       "Content-Type": "application/json",
     },
-  }).then((reseponse) => {
-    if (Response.status < 200 || Response.status >= 300) {
+  }).then((response) => {
+    if (response.status < 200 || response.status >= 300) {
       throw Error("Failed to log in");
     }
   });
@@ -86,5 +86,15 @@ export const addItemToCart = (itemId) => {
     if (response.status < 200 || response.status >= 300) {
       throw Error("Fail to add menu item to shopping cart");
     }
+  });
+};
+
+export const getDashboard = () => {
+  return fetch("/dashboard").then((response) => {
+    if (response.status < 200 || response.status >= 300) {
+      throw Error("Fail to load dashboard");
+    }
+
+    return response.json();
   });
 };

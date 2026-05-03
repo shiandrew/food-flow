@@ -4,7 +4,7 @@ import { checkout, getCart } from "../utils";
 
 const { Text } = Typography;
 
-const MyCart = () => {
+const MyCart = ({ onCartUpdated }) => {
   const [cartVisible, setCartVisible] = useState(false);
   const [cartData, setCartData] = useState();
   const [loading, setLoading] = useState(false);
@@ -30,6 +30,7 @@ const MyCart = () => {
       .then(() => {
         message.success("Successfully checkout");
         setCartVisible(false);
+        onCartUpdated?.();
       })
       .catch((err) => {
         message.error(err.message);
@@ -87,6 +88,7 @@ const MyCart = () => {
           loading={loading}
           itemLayout="horizontal"
           dataSource={cartData?.order_items}
+          locale={{ emptyText: "Your cart is empty." }}
           renderItem={(item) => (
             <List.Item>
               <List.Item.Meta

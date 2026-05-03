@@ -5,7 +5,7 @@ import { PlusOutlined } from "@ant-design/icons";
 
 const { Option } = Select;
 
-const AddToCartButton = ({ itemId }) => {
+const AddToCartButton = ({ itemId, onCartUpdated }) => {
   const [loading, setLoading] = useState(false);
 
   const AddToCart = () => {
@@ -13,6 +13,7 @@ const AddToCartButton = ({ itemId }) => {
     addItemToCart(itemId)
       .then(() => {
         message.success(`Successfully add item`);
+        onCartUpdated?.();
       })
       .catch((err) => {
         message.error(err.message);
@@ -34,12 +35,16 @@ const AddToCartButton = ({ itemId }) => {
   );
 };
 
-const FoodList = () => {
+const FoodList = ({ selectedRestaurantId, onRestaurantChange, onCartUpdated }) => {
   const [foodData, setFoodData] = useState([]);
-  const [curRest, setCurRest] = useState();
+  const [curRest, setCurRest] = useState(selectedRestaurantId);
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loadingRest, setLoadingRest] = useState(false);
+
+  useEffect(() => {
+    setCurRest(selectedRestaurantId);
+  }, [selectedRestaurantId]);
 
   useEffect(() => {
     setLoadingRest(true);
@@ -75,14 +80,17 @@ const FoodList = () => {
     <>
       <Select
         value={curRest}
-        onSelect={(value) => setCurRest(value)}
+        onSelect={(value) => {
+          setCurRest(value);
+          onRestaurantChange?.(value);
+        }}
         placeholder="Select a restaurant"
         loading={loadingRest}
         style={{ width: 300 }}
         onChange={() => {}}
       >
         {restaurants.map((item) => {
-          return <Option value={item.id}>{item.name}</Option>;
+          return <Option key={item.id} value={item.id}>{item.name}</Option>;
         })}
       </Select>
       {curRest && (
@@ -103,7 +111,7 @@ const FoodList = () => {
             <List.Item>
               <Card
                 title={item.name}
-                extra={<AddToCartButton itemId={item.id} />}
+                extra={<AddToCartButton itemId={item.id} onCartUpdated={onCartUpdated} />}
               >
                 <img
                   src={item.image_url}
