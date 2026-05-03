@@ -5,7 +5,7 @@ import { PlusOutlined } from "@ant-design/icons";
 
 const { Option } = Select;
 
-const AddToCartButton = ({ itemId }) => {
+const AddToCartButton = ({ itemId, onCartUpdated }) => {
   const [loading, setLoading] = useState(false);
 
   const AddToCart = () => {
@@ -13,6 +13,7 @@ const AddToCartButton = ({ itemId }) => {
     addItemToCart(itemId)
       .then(() => {
         message.success(`Successfully add item`);
+        onCartUpdated?.();
       })
       .catch((err) => {
         message.error(err.message);
@@ -34,7 +35,7 @@ const AddToCartButton = ({ itemId }) => {
   );
 };
 
-const FoodList = ({ selectedRestaurantId, onRestaurantChange }) => {
+const FoodList = ({ selectedRestaurantId, onRestaurantChange, onCartUpdated }) => {
   const [foodData, setFoodData] = useState([]);
   const [curRest, setCurRest] = useState(selectedRestaurantId);
   const [restaurants, setRestaurants] = useState([]);
@@ -110,7 +111,7 @@ const FoodList = ({ selectedRestaurantId, onRestaurantChange }) => {
             <List.Item>
               <Card
                 title={item.name}
-                extra={<AddToCartButton itemId={item.id} />}
+                extra={<AddToCartButton itemId={item.id} onCartUpdated={onCartUpdated} />}
               >
                 <img
                   src={item.image_url}

@@ -1,10 +1,11 @@
 import {
   ArrowRightOutlined,
+  InboxOutlined,
   FireOutlined,
   ShoppingCartOutlined,
   ShopOutlined,
 } from "@ant-design/icons";
-import { Button, Card, Col, List, Row, Space, Statistic, Typography } from "antd";
+import { Button, Card, Col, Empty, List, Row, Space, Statistic, Typography } from "antd";
 
 const { Paragraph, Text, Title } = Typography;
 
@@ -87,6 +88,14 @@ const DashboardPage = ({ dashboard, onBrowseRestaurant, onBrowseAll, onAddItemTo
           >
             <List
               dataSource={dashboard?.restaurants ?? []}
+              locale={{
+                emptyText: (
+                  <Empty
+                    image={Empty.PRESENTED_IMAGE_SIMPLE}
+                    description="No restaurants are available right now."
+                  />
+                ),
+              }}
               renderItem={(restaurant) => (
                 <List.Item
                   actions={[
@@ -130,6 +139,14 @@ const DashboardPage = ({ dashboard, onBrowseRestaurant, onBrowseAll, onAddItemTo
           >
             <List
               dataSource={dashboard?.featured_items ?? []}
+              locale={{
+                emptyText: (
+                  <Empty
+                    image={Empty.PRESENTED_IMAGE_SIMPLE}
+                    description="No featured items yet."
+                  />
+                ),
+              }}
               renderItem={(item) => (
                 <List.Item
                   actions={[
@@ -163,6 +180,14 @@ const DashboardPage = ({ dashboard, onBrowseRestaurant, onBrowseAll, onAddItemTo
                 </List.Item>
               )}
             />
+            {!(dashboard?.featured_items?.length ?? 0) ? (
+              <Space className="dashboard-empty-hint">
+                <InboxOutlined />
+                <Text type="secondary">
+                  Featured picks will appear here after menu content is loaded.
+                </Text>
+              </Space>
+            ) : null}
           </Card>
         </Col>
       </Row>

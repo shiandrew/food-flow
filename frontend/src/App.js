@@ -1,5 +1,5 @@
 import { Button, Layout, Spin, Typography, message } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DashboardPage from "./components/DashboardPage";
 import FoodList from "./components/FoodList";
 import LoginForm from "./components/LoginForm";
@@ -10,10 +10,14 @@ import "./App.css";
 
 const { Header, Content } = Layout;
 const { Text, Title } = Typography;
+const DASHBOARD_VIEW = "dashboard";
+const BROWSE_VIEW = "browse";
+const VIEW_STORAGE_KEY = "foodflow.currentView";
+const RESTAURANT_STORAGE_KEY = "foodflow.selectedRestaurantId";
 
 const App = () => {
   const [authed, setAuthed] = useState(false);
-  const [currentView, setCurrentView] = useState("dashboard");
+  const [currentView, setCurrentView] = useState(DASHBOARD_VIEW);
   const [selectedRestaurantId, setSelectedRestaurantId] = useState();
   const [dashboard, setDashboard] = useState();
   const [loadingDashboard, setLoadingDashboard] = useState(false);
@@ -34,13 +38,13 @@ const App = () => {
 
   const handleLoginSuccess = () => {
     setAuthed(true);
-    setCurrentView("dashboard");
+    setCurrentView(window.localStorage.getItem(VIEW_STORAGE_KEY) || DASHBOARD_VIEW);
     loadDashboard();
   };
 
   const handleBrowseRestaurant = (restaurantId) => {
     setSelectedRestaurantId(restaurantId);
-    setCurrentView("browse");
+    setCurrentView(BROWSE_VIEW);
   };
 
   const handleAddFeaturedItem = (itemId) => {
@@ -54,6 +58,44 @@ const App = () => {
       });
   };
 
+  const handleCartUpdated = () => {
+    if (authed) {
+      loadDashboard();
+    }
+  };
+
+  const handleGoToDashboard = () => {
+    setCurrentView(DASHBOARD_VIEW);
+    loadDashboard();
+  };
+
+  useEffect(() => {
+    const savedView = window.localStorage.getItem(VIEW_STORAGE_KEY);
+    const savedRestaurantId = window.localStorage.getItem(RESTAURANT_STORAGE_KEY);
+
+    if (savedView === DASHBOARD_VIEW || savedView === BROWSE_VIEW) {
+      setCurrentView(savedView);
+    }
+    if (savedRestaurantId) {
+      setSelectedRestaurantId(Number(savedRestaurantId));
+    }
+  }, []);
+
+  useEffect(() => {
+    window.localStorage.setItem(VIEW_STORAGE_KEY, currentView);
+  }, [currentView]);
+
+  useEffect(() => {
+    if (selectedRestaurantId) {
+      window.localStorage.setItem(
+        RESTAURANT_STORAGE_KEY,
+        String(selectedRestaurantId)
+      );
+    } else {
+      window.localStorage.removeItem(RESTAURANT_STORAGE_KEY);
+    }
+  }, [selectedRestaurantId]);
+
   return (
     <Layout className="app-shell">
       <Header className="app-header">
@@ -65,31 +107,33 @@ const App = () => {
             </Title>
           </div>
           <div className="app-header-actions">
-            {authed && currentView === "browse" ? (
-              <Button onClick={() => setCurrentView("dashboard")}>
+            {authed && currentView === BROWSE_VIEW ? (
+              <Button onClick={handleGoToDashboard}>
                 Back to Dashboard
               </Button>
             ) : null}
-            {authed && currentView === "dashboard" ? (
-              <Button onClick={() => setCurrentView("browse")}>
+            {authed && currentView === DASHBOARD_VIEW ? (
+              <Button onClick={() => setCurrentView(BROWSE_VIEW)}>
                 Browse Menus
               </Button>
             ) : null}
-            <div>{authed ? <MyCart /> : <SignupForm />}</div>
+            <div>
+              {authed ? <MyCart onCartUpdated={handleCartUpdated} /> : <SignupForm />}
+            </div>
           </div>
         </div>
       </Header>
 
       <Content className="app-content">
         {authed ? (
-          loadingDashboard && currentView === "dashboard" ? (
+          loadingDashboard && currentView === DASHBOARD_VIEW ? (
             <div className="app-centered-state">
               <Spin size="large" />
             </div>
-          ) : currentView === "dashboard" ? (
+          ) : currentView === DASHBOARD_VIEW ? (
             <DashboardPage
               dashboard={dashboard}
-              onBrowseAll={() => setCurrentView("browse")}
+              onBrowseAll={() => setCurrentView(BROWSE_VIEW)}
               onBrowseRestaurant={handleBrowseRestaurant}
               onAddItemToCart={handleAddFeaturedItem}
             />
@@ -99,6 +143,7 @@ const App = () => {
               <FoodList
                 selectedRestaurantId={selectedRestaurantId}
                 onRestaurantChange={setSelectedRestaurantId}
+                onCartUpdated={handleCartUpdated}
               />
             </div>
           )

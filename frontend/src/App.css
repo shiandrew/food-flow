@@ -111,6 +111,10 @@
   margin: 0 auto;
 }
 
+.dashboard-empty-hint {
+  margin-top: 12px;
+}
+
 @media (max-width: 900px) {
   .app-header-row {
     flex-direction: column;
