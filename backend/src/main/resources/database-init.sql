@@ -22,7 +22,7 @@ CREATE TABLE carts
     id          SERIAL PRIMARY KEY NOT NULL,
     customer_id INTEGER UNIQUE     NOT NULL,
     total_price NUMERIC            NOT NULL,
-    CONSTRAINT fk_customer FOREIGN KEY (customer_id) REFERENCES customers (id) ON DELETE CASCADE
+    CONSTRAINT fk_carts_customer FOREIGN KEY (customer_id) REFERENCES customers (id) ON DELETE CASCADE
 );
 
 
@@ -65,7 +65,7 @@ CREATE TABLE authorities
     id        SERIAL PRIMARY KEY NOT NULL,
     email     TEXT               NOT NULL,
     authority TEXT               NOT NULL,
-    CONSTRAINT fk_customer FOREIGN KEY (email) REFERENCES customers (email) ON DELETE CASCADE
+    CONSTRAINT fk_authorities_customer FOREIGN KEY (email) REFERENCES customers (email) ON DELETE CASCADE
 );
 
 
